@@ -1,70 +1,227 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Próximos Jogos - Brasileirão</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Curiosidades - Sem Key</title>
 <style>
+  :root {
+    --bg: #0f1724;
+    --card: #1f2937;
+    --accent: #22c55e;
+    --muted: #93c5fd;
+    --text: #e6eef8;
+  }
   body {
-    font-family: Arial, sans-serif;
-    background: #1e293b;
-    color: white;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    background: linear-gradient(180deg,var(--bg), #081021 120%);
+    color:var(--text);
+    padding:24px;
+    box-sizing:border-box;
   }
-  h1 { font-size: 2rem; margin-bottom: 20px; }
-  .game {
-    background: #334155;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 10px 0;
-    width: 90%;
-    max-width: 500px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .wrap {
+    width:100%;
+    max-width:920px;
   }
-  .teams { font-size: 1.2rem; }
-  .score { font-size: 1.5rem; font-weight: bold; color: #f39c12; }
-  .time { font-weight: bold; font-size: 0.9rem; }
+  header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:18px;
+  }
+  h1 { font-size:1.4rem; margin:0; letter-spacing:0.2px; }
+  .controls { display:flex; gap:8px; align-items:center; }
+  button, select {
+    background:var(--card);
+    color:var(--text);
+    border:1px solid rgba(255,255,255,0.04);
+    padding:10px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:0.95rem;
+  }
+  button:hover { transform:translateY(-2px); }
+  main {
+    display:grid;
+    grid-template-columns: 1fr 340px;
+    gap:16px;
+  }
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;
+    padding:20px;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .fact {
+    font-size:1.15rem;
+    line-height:1.5;
+    margin-bottom:14px;
+    min-height:84px;
+    display:flex;
+    align-items:center;
+  }
+  .meta { font-size:0.85rem; color:var(--muted); display:flex; gap:10px; align-items:center; }
+  .muted { color:var(--muted); }
+  .history {
+    max-height:56vh;
+    overflow:auto;
+    padding-top:8px;
+  }
+  .hist-item {
+    padding:10px;
+    border-radius:8px;
+    margin-bottom:8px;
+    background: rgba(255,255,255,0.01);
+    font-size:0.92rem;
+    color:var(--text);
+  }
+  .score { color:var(--accent); font-weight:700; margin-left:8px; }
+  .small { font-size:0.82rem; color:var(--muted); }
+  footer { margin-top:12px; text-align:center; color:var(--muted); font-size:0.85rem; }
+  @media (max-width:880px) {
+    main { grid-template-columns: 1fr; }
+    .history { max-height:35vh; }
+  }
 </style>
 </head>
 <body>
-<h1>Próximos Jogos - Brasileirão</h1>
-<div id="games">Carregando jogos...</div>
+  <div class="wrap">
+    <header>
+      <h1>Curiosidades (sem key)</h1>
+      <div class="controls">
+        <label class="small muted">Auto:</label>
+        <select id="interval">
+          <option value="0">Desligado</option>
+          <option value="15">15s</option>
+          <option value="30" selected>30s</option>
+          <option value="60">60s</option>
+          <option value="120">2min</option>
+        </select>
+        <button id="newBtn">Nova curiosidade</button>
+        <button id="copyBtn">Copiar</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card">
+        <div class="fact" id="fact">Carregando curiosidade...</div>
+        <div class="meta">
+          <div id="source" class="small muted">Fonte: uselessfacts.jsph.pl</div>
+          <div id="time" class="small muted" style="margin-left:auto"></div>
+        </div>
+        <footer id="note" class="small">Dica: se abrir em TV/pendrive e a API bloquear por CORS, salve este HTML e use o modo "arquivo" ou hospede o JSON em um GitHub Gist público ou JSON hosting que permita CORS.</footer>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0; font-size:1rem;">Histórico</h2>
+        <div class="history" id="history">Nenhuma curiosidade ainda.</div>
+      </aside>
+    </main>
+  </div>
 
 <script>
-const jogos = [
-  { date: "2025-09-29T20:00:00Z", home: "Flamengo", away: "Palmeiras", scoreHome: 2, scoreAway: 1 },
-  { date: "2025-09-30T18:00:00Z", home: "Corinthians", away: "São Paulo", scoreHome: 1, scoreAway: 0 },
-  { date: "2025-10-01T19:30:00Z", home: "Atlético-MG", away: "Santos", scoreHome: 3, scoreAway: 2 },
-  { date: "2025-10-02T21:00:00Z", home: "Grêmio", away: "Internacional", scoreHome: 0, scoreAway: 0 }
-];
+  // Endpoint público (sem key) com suporte a language=pt
+  const API = 'https://uselessfacts.jsph.pl/random.json?language=pt';
 
-function carregarJogos() {
-  const container = document.getElementById('games');
-  container.innerHTML = '';
-  jogos.forEach(j => {
-    const div = document.createElement('div');
-    div.className = 'game';
-    div.innerHTML = `
-      <div class="time">${new Date(j.date).toLocaleString('pt-BR')}</div>
-      <div class="teams">${j.home} vs ${j.away}</div>
-      <div class="score">${j.scoreHome} x ${j.scoreAway}</div>
-    `;
-    container.appendChild(div);
+  const factEl = document.getElementById('fact');
+  const historyEl = document.getElementById('history');
+  const newBtn = document.getElementById('newBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const intervalSelect = document.getElementById('interval');
+  const timeEl = document.getElementById('time');
+  const sourceEl = document.getElementById('source');
+
+  let autoTimer = null;
+  let history = [];
+
+  async function fetchFact() {
+    // Mostra loading
+    factEl.textContent = 'Carregando curiosidade...';
+    try {
+      const res = await fetch(API, { cache: "no-store" });
+      if (!res.ok) throw new Error('Resposta não OK: ' + res.status);
+      const data = await res.json();
+      // Estrutura da API: { id, text, source_url, permalink }
+      const text = (data.text || data.fact || '').trim();
+      showFact(text || 'Nenhum conteúdo recebido.');
+      sourceEl.innerHTML = `Fonte: <span class="muted">uselessfacts.jsph.pl</span>`;
+    } catch (err) {
+      // fallback: mensagem local
+      console.error(err);
+      showFact('Erro ao buscar da API. Aqui vai uma curiosidade salva localmente: O mel nunca estraga — foram encontrados potes comestíveis de mel em tumbas egípcias.');
+      sourceEl.innerHTML = `Fonte: <span class="muted">fallback local</span>`;
+    }
+  }
+
+  function showFact(text) {
+    const now = new Date();
+    factEl.textContent = text;
+    timeEl.textContent = now.toLocaleTimeString('pt-BR');
+    addToHistory(text, now);
+  }
+
+  function addToHistory(text, when) {
+    // evita duplicatas consecutivas
+    if (history.length && history[0].text === text) return;
+    history.unshift({ text, when: when.toLocaleString('pt-BR') });
+    if (history.length > 40) history.pop();
+    renderHistory();
+  }
+
+  function renderHistory() {
+    if (!history.length) {
+      historyEl.textContent = 'Nenhuma curiosidade ainda.';
+      return;
+    }
+    historyEl.innerHTML = '';
+    history.forEach(item => {
+      const d = document.createElement('div');
+      d.className = 'hist-item';
+      d.innerHTML = `<div style="font-size:0.95rem">${item.text}</div>
+                     <div class="small muted" style="margin-top:6px">${item.when}</div>`;
+      historyEl.appendChild(d);
+    });
+  }
+
+  newBtn.addEventListener('click', fetchFact);
+  copyBtn.addEventListener('click', () => {
+    const txt = factEl.textContent || '';
+    if (!txt) return alert('Nada para copiar ainda.');
+    navigator.clipboard?.writeText(txt).then(()=> {
+      copyBtn.textContent = 'Copiado!';
+      setTimeout(()=> copyBtn.textContent = 'Copiar', 1200);
+    }).catch(()=> alert('Falha ao copiar.'));
   });
-}
 
-// Atualiza a cada 60 segundos
-carregarJogos();
-setInterval(carregarJogos, 60000);
+  intervalSelect.addEventListener('change', () => {
+    setupAuto(parseInt(intervalSelect.value, 10));
+  });
+
+  function setupAuto(seconds) {
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+    }
+    if (seconds > 0) {
+      autoTimer = setInterval(fetchFact, seconds * 1000);
+    }
+  }
+
+  // inicia
+  fetchFact();
+  setupAuto(parseInt(intervalSelect.value, 10));
+
+  // Atalhos: tecla N para nova curiosidade
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'n') fetchFact();
+  });
 </script>
 </body>
 </html>
