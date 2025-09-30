@@ -1,109 +1,52 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curiosidades do Brasil</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #1e293b;
-    color: white;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
-  }
-  img {
-    width: 120px;
-    margin-bottom: 20px;
-  }
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  .card {
-    background: #334155;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 500px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  }
-  .titulo {
-    font-size: 1.3rem;
-    color: #38bdf8;
-    margin-bottom: 10px;
-  }
-  .texto {
-    font-size: 1.1rem;
-  }
-  small {
-    font-size: 0.8rem;
-    opacity: 0.7;
-    margin-top: 20px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Curiosidades do Brasil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f0f8f0;
+    }
+    img {
+      width: 150px;
+      margin: 20px auto;
+      display: block;
+    }
+    .card {
+      background: white;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      width: 60%;
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
   <img src="https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg" alt="Bandeira do Brasil">
-  <h1>Curiosidades do Brasil</h1>
 
-  <div class="card">
-    <div class="titulo">Feriado Nacional</div>
-    <div class="texto" id="feriado">Carregando...</div>
-  </div>
+  <div id="curiosidade" class="card">Carregando curiosidade...</div>
 
-  <div class="card">
-    <div class="titulo">Cotação do Dólar</div>
-    <div class="texto" id="dolar">Carregando...</div>
-  </div>
+  <script>
+    const curiosidades = [
+      "O Brasil é o quinto maior país do mundo em extensão territorial.",
+      "A onça-pintada é o maior felino das Américas e vive em território brasileiro.",
+      "O Acre já foi território da Bolívia e só se tornou parte do Brasil em 1903.",
+      "Brasília foi construída em apenas 41 meses e inaugurada em 1960.",
+      "O mel nunca estraga: potes encontrados em pirâmides do Egito ainda estavam bons, e no Brasil também se conserva por séculos.",
+      "O futebol é o esporte mais popular do Brasil e a seleção é a única pentacampeã mundial."
+    ];
 
-  <div class="card">
-    <div class="titulo">Banco Brasileiro</div>
-    <div class="texto" id="banco">Carregando...</div>
-  </div>
+    function mostrarCuriosidade() {
+      const i = Math.floor(Math.random() * curiosidades.length);
+      document.getElementById("curiosidade").innerText = curiosidades[i];
+    }
 
-  <small>Fonte: BrasilAPI (https://brasilapi.com.br)</small>
-
-<script>
-async function carregarCuriosidades() {
-  try {
-    // Feriados
-    const feriadoResp = await fetch("https://brasilapi.com.br/api/feriados/v1/2025");
-    const feriados = await feriadoResp.json();
-    const feriadoAleatorio = feriados[Math.floor(Math.random() * feriados.length)];
-    document.getElementById("feriado").textContent =
-      `${feriadoAleatorio.name} - ${new Date(feriadoAleatorio.date).toLocaleDateString("pt-BR")}`;
-
-    // Cotação do dólar
-    const cotacaoResp = await fetch("https://brasilapi.com.br/api/cotacao/v1/all");
-    const cotacoes = await cotacaoResp.json();
-    document.getElementById("dolar").textContent =
-      `R$ ${cotacoes.USD.buy.toFixed(2)} (compra)`;
-
-    // Bancos
-    const bancosResp = await fetch("https://brasilapi.com.br/api/banks/v1");
-    const bancos = await bancosResp.json();
-    const bancoAleatorio = bancos[Math.floor(Math.random() * bancos.length)];
-    document.getElementById("banco").textContent =
-      `${bancoAleatorio.code} - ${bancoAleatorio.name}`;
-  } catch (e) {
-    console.error(e);
-    document.getElementById("feriado").textContent = "Erro ao carregar dados";
-    document.getElementById("dolar").textContent = "Erro ao carregar dados";
-    document.getElementById("banco").textContent = "Erro ao carregar dados";
-  }
-}
-
-// Atualiza de 20 em 20 segundos
-carregarCuriosidades();
-setInterval(carregarCuriosidades, 20000);
-</script>
+    mostrarCuriosidade();
+    setInterval(mostrarCuriosidade, 8000); // troca a cada 8s
+  </script>
 </body>
 </html>
