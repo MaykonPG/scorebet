@@ -1,227 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Curiosidades - Sem Key</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curiosidades do Brasil - Feriados</title>
 <style>
-  :root {
-    --bg: #0f1724;
-    --card: #1f2937;
-    --accent: #22c55e;
-    --muted: #93c5fd;
-    --text: #e6eef8;
-  }
   body {
-    margin:0;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-    background: linear-gradient(180deg,var(--bg), #081021 120%);
-    color:var(--text);
-    padding:24px;
-    box-sizing:border-box;
+    font-family: Arial, sans-serif;
+    background: #1e293b;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
   }
-  .wrap {
-    width:100%;
-    max-width:920px;
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
   }
-  header {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:18px;
+  .curiosidade {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
   }
-  h1 { font-size:1.4rem; margin:0; letter-spacing:0.2px; }
-  .controls { display:flex; gap:8px; align-items:center; }
-  button, select {
-    background:var(--card);
-    color:var(--text);
-    border:1px solid rgba(255,255,255,0.04);
-    padding:10px 12px;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:0.95rem;
+  .data {
+    font-size: 1.2rem;
+    margin-bottom: 25px;
+    color: #38bdf8;
   }
-  button:hover { transform:translateY(-2px); }
-  main {
-    display:grid;
-    grid-template-columns: 1fr 340px;
-    gap:16px;
-  }
-  .card {
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:14px;
-    padding:20px;
-    box-shadow: 0 6px 18px rgba(2,6,23,0.6);
-    border: 1px solid rgba(255,255,255,0.03);
-  }
-  .fact {
-    font-size:1.15rem;
-    line-height:1.5;
-    margin-bottom:14px;
-    min-height:84px;
-    display:flex;
-    align-items:center;
-  }
-  .meta { font-size:0.85rem; color:var(--muted); display:flex; gap:10px; align-items:center; }
-  .muted { color:var(--muted); }
-  .history {
-    max-height:56vh;
-    overflow:auto;
-    padding-top:8px;
-  }
-  .hist-item {
-    padding:10px;
-    border-radius:8px;
-    margin-bottom:8px;
-    background: rgba(255,255,255,0.01);
-    font-size:0.92rem;
-    color:var(--text);
-  }
-  .score { color:var(--accent); font-weight:700; margin-left:8px; }
-  .small { font-size:0.82rem; color:var(--muted); }
-  footer { margin-top:12px; text-align:center; color:var(--muted); font-size:0.85rem; }
-  @media (max-width:880px) {
-    main { grid-template-columns: 1fr; }
-    .history { max-height:35vh; }
+  small {
+    font-size: 0.9rem;
+    opacity: 0.7;
   }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Curiosidades (sem key)</h1>
-      <div class="controls">
-        <label class="small muted">Auto:</label>
-        <select id="interval">
-          <option value="0">Desligado</option>
-          <option value="15">15s</option>
-          <option value="30" selected>30s</option>
-          <option value="60">60s</option>
-          <option value="120">2min</option>
-        </select>
-        <button id="newBtn">Nova curiosidade</button>
-        <button id="copyBtn">Copiar</button>
-      </div>
-    </header>
-
-    <main>
-      <section class="card">
-        <div class="fact" id="fact">Carregando curiosidade...</div>
-        <div class="meta">
-          <div id="source" class="small muted">Fonte: uselessfacts.jsph.pl</div>
-          <div id="time" class="small muted" style="margin-left:auto"></div>
-        </div>
-        <footer id="note" class="small">Dica: se abrir em TV/pendrive e a API bloquear por CORS, salve este HTML e use o modo "arquivo" ou hospede o JSON em um GitHub Gist público ou JSON hosting que permita CORS.</footer>
-      </section>
-
-      <aside class="card">
-        <h2 style="margin:0 0 10px 0; font-size:1rem;">Histórico</h2>
-        <div class="history" id="history">Nenhuma curiosidade ainda.</div>
-      </aside>
-    </main>
-  </div>
+  <h1>Curiosidades do Brasil</h1>
+  <div class="curiosidade" id="feriado">Carregando...</div>
+  <div class="data" id="dataFeriado"></div>
+  <small>Fonte: BrasilAPI - Feriados Nacionais</small>
 
 <script>
-  // Endpoint público (sem key) com suporte a language=pt
-  const API = 'https://uselessfacts.jsph.pl/random.json?language=pt';
+async function carregarCuriosidade() {
+  try {
+    const resposta = await fetch("https://brasilapi.com.br/api/feriados/v1/2025");
+    const dados = await resposta.json();
 
-  const factEl = document.getElementById('fact');
-  const historyEl = document.getElementById('history');
-  const newBtn = document.getElementById('newBtn');
-  const copyBtn = document.getElementById('copyBtn');
-  const intervalSelect = document.getElementById('interval');
-  const timeEl = document.getElementById('time');
-  const sourceEl = document.getElementById('source');
+    // pega um feriado aleatório
+    const aleatorio = dados[Math.floor(Math.random() * dados.length)];
 
-  let autoTimer = null;
-  let history = [];
-
-  async function fetchFact() {
-    // Mostra loading
-    factEl.textContent = 'Carregando curiosidade...';
-    try {
-      const res = await fetch(API, { cache: "no-store" });
-      if (!res.ok) throw new Error('Resposta não OK: ' + res.status);
-      const data = await res.json();
-      // Estrutura da API: { id, text, source_url, permalink }
-      const text = (data.text || data.fact || '').trim();
-      showFact(text || 'Nenhum conteúdo recebido.');
-      sourceEl.innerHTML = `Fonte: <span class="muted">uselessfacts.jsph.pl</span>`;
-    } catch (err) {
-      // fallback: mensagem local
-      console.error(err);
-      showFact('Erro ao buscar da API. Aqui vai uma curiosidade salva localmente: O mel nunca estraga — foram encontrados potes comestíveis de mel em tumbas egípcias.');
-      sourceEl.innerHTML = `Fonte: <span class="muted">fallback local</span>`;
-    }
+    document.getElementById("feriado").textContent = aleatorio.name;
+    document.getElementById("dataFeriado").textContent = 
+      `Data: ${new Date(aleatorio.date).toLocaleDateString("pt-BR")}`;
+  } catch (e) {
+    document.getElementById("feriado").textContent = "Erro ao carregar";
+    document.getElementById("dataFeriado").textContent = "";
   }
+}
 
-  function showFact(text) {
-    const now = new Date();
-    factEl.textContent = text;
-    timeEl.textContent = now.toLocaleTimeString('pt-BR');
-    addToHistory(text, now);
-  }
-
-  function addToHistory(text, when) {
-    // evita duplicatas consecutivas
-    if (history.length && history[0].text === text) return;
-    history.unshift({ text, when: when.toLocaleString('pt-BR') });
-    if (history.length > 40) history.pop();
-    renderHistory();
-  }
-
-  function renderHistory() {
-    if (!history.length) {
-      historyEl.textContent = 'Nenhuma curiosidade ainda.';
-      return;
-    }
-    historyEl.innerHTML = '';
-    history.forEach(item => {
-      const d = document.createElement('div');
-      d.className = 'hist-item';
-      d.innerHTML = `<div style="font-size:0.95rem">${item.text}</div>
-                     <div class="small muted" style="margin-top:6px">${item.when}</div>`;
-      historyEl.appendChild(d);
-    });
-  }
-
-  newBtn.addEventListener('click', fetchFact);
-  copyBtn.addEventListener('click', () => {
-    const txt = factEl.textContent || '';
-    if (!txt) return alert('Nada para copiar ainda.');
-    navigator.clipboard?.writeText(txt).then(()=> {
-      copyBtn.textContent = 'Copiado!';
-      setTimeout(()=> copyBtn.textContent = 'Copiar', 1200);
-    }).catch(()=> alert('Falha ao copiar.'));
-  });
-
-  intervalSelect.addEventListener('change', () => {
-    setupAuto(parseInt(intervalSelect.value, 10));
-  });
-
-  function setupAuto(seconds) {
-    if (autoTimer) {
-      clearInterval(autoTimer);
-      autoTimer = null;
-    }
-    if (seconds > 0) {
-      autoTimer = setInterval(fetchFact, seconds * 1000);
-    }
-  }
-
-  // inicia
-  fetchFact();
-  setupAuto(parseInt(intervalSelect.value, 10));
-
-  // Atalhos: tecla N para nova curiosidade
-  document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'n') fetchFact();
-  });
+// troca a curiosidade a cada 15 segundos
+carregarCuriosidade();
+setInterval(carregarCuriosidade, 15000);
 </script>
 </body>
 </html>
