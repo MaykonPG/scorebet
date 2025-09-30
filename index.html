@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Curiosidades do Brasil - Feriados</title>
+<title>Curiosidades do Brasil</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -12,59 +12,98 @@
     text-align: center;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     padding: 20px;
+  }
+  img {
+    width: 120px;
+    margin-bottom: 20px;
   }
   h1 {
     font-size: 2rem;
     margin-bottom: 20px;
   }
-  .curiosidade {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 15px;
+  .card {
+    background: #334155;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   }
-  .data {
-    font-size: 1.2rem;
-    margin-bottom: 25px;
+  .titulo {
+    font-size: 1.3rem;
     color: #38bdf8;
+    margin-bottom: 10px;
+  }
+  .texto {
+    font-size: 1.1rem;
   }
   small {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     opacity: 0.7;
+    margin-top: 20px;
   }
 </style>
 </head>
 <body>
+  <img src="https://upload.wikimedia.org/wikipedia/en/0/05/Flag_of_Brazil.svg" alt="Bandeira do Brasil">
   <h1>Curiosidades do Brasil</h1>
-  <div class="curiosidade" id="feriado">Carregando...</div>
-  <div class="data" id="dataFeriado"></div>
-  <small>Fonte: BrasilAPI - Feriados Nacionais</small>
+
+  <div class="card">
+    <div class="titulo">Feriado Nacional</div>
+    <div class="texto" id="feriado">Carregando...</div>
+  </div>
+
+  <div class="card">
+    <div class="titulo">Cotação do Dólar</div>
+    <div class="texto" id="dolar">Carregando...</div>
+  </div>
+
+  <div class="card">
+    <div class="titulo">Banco Brasileiro</div>
+    <div class="texto" id="banco">Carregando...</div>
+  </div>
+
+  <small>Fonte: BrasilAPI (https://brasilapi.com.br)</small>
 
 <script>
-async function carregarCuriosidade() {
+async function carregarCuriosidades() {
   try {
-    const resposta = await fetch("https://brasilapi.com.br/api/feriados/v1/2025");
-    const dados = await resposta.json();
+    // Feriados
+    const feriadoResp = await fetch("https://brasilapi.com.br/api/feriados/v1/2025");
+    const feriados = await feriadoResp.json();
+    const feriadoAleatorio = feriados[Math.floor(Math.random() * feriados.length)];
+    document.getElementById("feriado").textContent =
+      `${feriadoAleatorio.name} - ${new Date(feriadoAleatorio.date).toLocaleDateString("pt-BR")}`;
 
-    // pega um feriado aleatório
-    const aleatorio = dados[Math.floor(Math.random() * dados.length)];
+    // Cotação do dólar
+    const cotacaoResp = await fetch("https://brasilapi.com.br/api/cotacao/v1/all");
+    const cotacoes = await cotacaoResp.json();
+    document.getElementById("dolar").textContent =
+      `R$ ${cotacoes.USD.buy.toFixed(2)} (compra)`;
 
-    document.getElementById("feriado").textContent = aleatorio.name;
-    document.getElementById("dataFeriado").textContent = 
-      `Data: ${new Date(aleatorio.date).toLocaleDateString("pt-BR")}`;
+    // Bancos
+    const bancosResp = await fetch("https://brasilapi.com.br/api/banks/v1");
+    const bancos = await bancosResp.json();
+    const bancoAleatorio = bancos[Math.floor(Math.random() * bancos.length)];
+    document.getElementById("banco").textContent =
+      `${bancoAleatorio.code} - ${bancoAleatorio.name}`;
   } catch (e) {
-    document.getElementById("feriado").textContent = "Erro ao carregar";
-    document.getElementById("dataFeriado").textContent = "";
+    console.error(e);
+    document.getElementById("feriado").textContent = "Erro ao carregar dados";
+    document.getElementById("dolar").textContent = "Erro ao carregar dados";
+    document.getElementById("banco").textContent = "Erro ao carregar dados";
   }
 }
 
-// troca a curiosidade a cada 15 segundos
-carregarCuriosidade();
-setInterval(carregarCuriosidade, 15000);
+// Atualiza de 20 em 20 segundos
+carregarCuriosidades();
+setInterval(carregarCuriosidades, 20000);
 </script>
 </body>
 </html>
