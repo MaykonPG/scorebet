@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Próximos Jogos - Premier League</title>
+  <title>Próximos Jogos - Campeonato Brasileiro</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,7 +29,10 @@
       margin: 10px 0;
       width: 90%;
       max-width: 500px;
-      text-align: left;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .time {
       font-weight: bold;
@@ -43,24 +46,24 @@
       font-size: 0.9rem;
       opacity: 0.8;
     }
+    .score {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f39c12;
+    }
   </style>
 </head>
 <body>
-  <h1>Próximos Jogos - Premier League</h1>
+  <h1>Próximos Jogos - Campeonato Brasileiro</h1>
   <div id="games">Carregando jogos...</div>
 
   <script>
     const jogos = [
-      { date: "2025-10-03T12:00:00Z", title: "Fulham FC vs AFC Bournemouth", competition: { name: "Premier League" } },
-      { date: "2025-10-04T04:30:00Z", title: "Tottenham Hotspur vs Leeds United", competition: { name: "Premier League" } },
-      { date: "2025-10-04T07:00:00Z", title: "West Ham United vs Arsenal FC", competition: { name: "Premier League" } },
-      { date: "2025-10-04T07:00:00Z", title: "Sunderland AFC vs Manchester United", competition: { name: "Premier League" } },
-      { date: "2025-10-04T09:30:00Z", title: "Liverpool FC vs Chelsea FC", competition: { name: "Premier League" } },
-      { date: "2025-10-05T06:00:00Z", title: "Burnley FC vs Aston Villa", competition: { name: "Premier League" } },
-      { date: "2025-10-05T06:00:00Z", title: "Crystal Palace vs Everton FC", competition: { name: "Premier League" } },
-      { date: "2025-10-05T06:00:00Z", title: "Nottingham Forest vs Newcastle United", competition: { name: "Premier League" } },
-      { date: "2025-10-05T06:00:00Z", title: "Brighton & Hove Albion vs Wolverhampton Wanderers", competition: { name: "Premier League" } },
-      { date: "2025-10-05T08:30:00Z", title: "Manchester City vs Brentford FC", competition: { name: "Premier League" } }
+      { date: "2025-10-03T12:00:00Z", homeTeam: "Atlético-MG", awayTeam: "Flamengo", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
+      { date: "2025-10-04T14:00:00Z", homeTeam: "São Paulo", awayTeam: "Palmeiras", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
+      { date: "2025-10-04T16:30:00Z", homeTeam: "Grêmio", awayTeam: "Internacional", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
+      { date: "2025-10-05T18:00:00Z", homeTeam: "Corinthians", awayTeam: "Fluminense", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
+      { date: "2025-10-06T20:30:00Z", homeTeam: "Vasco", awayTeam: "Cruzeiro", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } }
     ];
 
     function carregarJogos() {
@@ -71,7 +74,8 @@
         div.className = 'game';
         div.innerHTML = `
           <div class="time">${new Date(jogo.date).toLocaleString('pt-BR')}</div>
-          <div class="teams">${jogo.title}</div>
+          <div class="teams">${jogo.homeTeam} vs ${jogo.awayTeam}</div>
+          <div class="score">${jogo.scoreHome} x ${jogo.scoreAway}</div>
           <div class="status">${jogo.competition.name}</div>
         `;
         container.appendChild(div);
