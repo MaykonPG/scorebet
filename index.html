@@ -1,90 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Próximos Jogos - Campeonato Brasileiro</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #1e293b;
-      color: white;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: start;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-    .game {
-      background: #334155;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 10px 0;
-      width: 90%;
-      max-width: 500px;
-      text-align: center;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .time {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    .teams {
-      font-size: 1.2rem;
-      margin-bottom: 5px;
-    }
-    .status {
-      font-size: 0.9rem;
-      opacity: 0.8;
-    }
-    .score {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #f39c12;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Próximos Jogos - Brasileirão</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #1e293b;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 { font-size: 2rem; margin-bottom: 20px; }
+  .game {
+    background: #334155;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    width: 90%;
+    max-width: 500px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .teams { font-size: 1.2rem; }
+  .score { font-size: 1.5rem; font-weight: bold; color: #f39c12; }
+  .time { font-weight: bold; font-size: 0.9rem; }
+</style>
 </head>
 <body>
-  <h1>Próximos Jogos - Campeonato Brasileiro</h1>
-  <div id="games">Carregando jogos...</div>
+<h1>Próximos Jogos - Brasileirão</h1>
+<div id="games">Carregando jogos...</div>
 
-  <script>
-    const jogos = [
-      { date: "2025-10-03T12:00:00Z", homeTeam: "Atlético-MG", awayTeam: "Flamengo", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
-      { date: "2025-10-04T14:00:00Z", homeTeam: "São Paulo", awayTeam: "Palmeiras", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
-      { date: "2025-10-04T16:30:00Z", homeTeam: "Grêmio", awayTeam: "Internacional", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
-      { date: "2025-10-05T18:00:00Z", homeTeam: "Corinthians", awayTeam: "Fluminense", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } },
-      { date: "2025-10-06T20:30:00Z", homeTeam: "Vasco", awayTeam: "Cruzeiro", scoreHome: 0, scoreAway: 0, competition: { name: "Campeonato Brasileiro" } }
-    ];
+<script>
+const jogos = [
+  { date: "2025-09-29T20:00:00Z", home: "Flamengo", away: "Palmeiras", scoreHome: 2, scoreAway: 1 },
+  { date: "2025-09-30T18:00:00Z", home: "Corinthians", away: "São Paulo", scoreHome: 1, scoreAway: 0 },
+  { date: "2025-10-01T19:30:00Z", home: "Atlético-MG", away: "Santos", scoreHome: 3, scoreAway: 2 },
+  { date: "2025-10-02T21:00:00Z", home: "Grêmio", away: "Internacional", scoreHome: 0, scoreAway: 0 }
+];
 
-    function carregarJogos() {
-      const container = document.getElementById('games');
-      container.innerHTML = '';
-      jogos.forEach(jogo => {
-        const div = document.createElement('div');
-        div.className = 'game';
-        div.innerHTML = `
-          <div class="time">${new Date(jogo.date).toLocaleString('pt-BR')}</div>
-          <div class="teams">${jogo.homeTeam} vs ${jogo.awayTeam}</div>
-          <div class="score">${jogo.scoreHome} x ${jogo.scoreAway}</div>
-          <div class="status">${jogo.competition.name}</div>
-        `;
-        container.appendChild(div);
-      });
-    }
+function carregarJogos() {
+  const container = document.getElementById('games');
+  container.innerHTML = '';
+  jogos.forEach(j => {
+    const div = document.createElement('div');
+    div.className = 'game';
+    div.innerHTML = `
+      <div class="time">${new Date(j.date).toLocaleString('pt-BR')}</div>
+      <div class="teams">${j.home} vs ${j.away}</div>
+      <div class="score">${j.scoreHome} x ${j.scoreAway}</div>
+    `;
+    container.appendChild(div);
+  });
+}
 
-    // Atualiza a cada 60 segundos
-    carregarJogos();
-    setInterval(carregarJogos, 60000);
-  </script>
+// Atualiza a cada 60 segundos
+carregarJogos();
+setInterval(carregarJogos, 60000);
+</script>
 </body>
 </html>
